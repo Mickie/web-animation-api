@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+ <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>web-animation-api-forFun</title>
+        <script src="web-animations.min.js"></script>
+        <script src="web-animations-next.min.js"></script><!-- exposed more fn http://w3c.github.io/web-animations/-->
+        <!--<script src="web-animations-next-lite.min.js"></script>--><!-- code won't work if this lib included, seems bug somewhere -->
+    </head>
+    <body>
+        <div class="pulse" style="width:150px;">Hello world!</div>
+        <div class="rotate" style="width:90px;opacity:0;border:1px solid black">I am rotating after hello world's done!</div>
+        <script type="text/javascript">
+
+            var el = document.getElementsByClassName('pulse')[0];
+            var el1 = document.querySelector('.rotate');
+
+            var effect = {
+                xcale: [
+                    {opacity: 0.5, transform: "scale(0.5)"},
+                    {opacity: 1.0, transform: "scale(1)"}
+                ],
+                rotate: [
+                    {opacity: 0, transform: "translateX(0) rotate(0)"},
+                    {opacity: 1, transform: "translateX(5vw) rotate(180deg)"}
+                ]
+            };
+
+            var timing = {
+                ease: 'ease-in-out',
+                direction: "alternate",
+                duration: 500,
+                iterations: 4
+            };
+            var scaleAmni = new KeyframeEffect(el, effect.xcale, timing);
+            var rotateAmni = new KeyframeEffect(el1, effect.rotate, timing);
+
+            //sequenceEffects
+            var sEffect = new SequenceEffect([scaleAmni, rotateAmni]);
+            var anmi = document.timeline.play(sEffect);
+
+            anmi.onfinish = function () {
+                // groupEffects, won't work if defined with sEffect the same time
+                var gEffect = new GroupEffect([scaleAmni, rotateAmni]);
+                var amni1 = document.timeline.play(gEffect);
+                amni1.addEventListener('finish', finishHandler, false);
+            };
+
+            function finishHandler() {
+                alert('animation done');
+            }
+
+        </script>
+    </body>
+ </html>
